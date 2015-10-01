@@ -51,6 +51,24 @@ def serve(sock, func):
         (clientsocket, address) = sock.accept()
         _thread.start_new_thread(func, (clientsocket,))
 
+########################################################## 
+# server utilities
+##########################################################
+def getUrlFromReq(req): 
+  return req.split()[1];
+
+def returnFileText(path):
+  f = open('index.html')
+  return f.read()
+
+def send(sock, msg):
+  sent = 0
+  while sent < len(msg):
+      buff = bytes( msg[sent: ], encoding="utf-8")
+      sent += sock.send( buff )
+  sock.close()
+  return
+
 
 def sendcat(sock):
     """
@@ -67,12 +85,21 @@ def sendcat(sock):
 
     return
 
+def sendFile(sock):
+  request = sock.recv(1024)
+  path = getUrlFromReq(request);
+  msg = returnFileText(path);
+
+  send(sock, msg);
+  return
+
 def main():
     port = random.randint(5000,8000)
+    # port = 4002;
     sock = listen(port)
     print("Listening on port {}".format(port))
     print("Socket is {}".format(sock))
-    serve(sock, sendcat)
+    serve(sock, sendFile)
 
 main()
     

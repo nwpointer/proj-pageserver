@@ -50,24 +50,17 @@ def serve(sock, func):
         (clientsocket, address) = sock.accept()
         _thread.start_new_thread(func, (clientsocket,))
 
-
-CAT = """
-     ^ ^
-   =(   )=
-   """
-
 def returnFileText(path):
     """
     take file path and return contents
     """
     try:
       f = open(path)
-      return f.read()
     except: #catch all
-      return '404'
+      f = open('404.html')
+      
+    return f.read()
      
-    
-
 
 def respond(sock):
     """
