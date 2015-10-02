@@ -15,6 +15,8 @@ Socket programming in Python
 import socket    # Basic TCP/IP communication on the internet
 import random    # To pick a port at random, giving us some chance to pick a port not in use
 import _thread   # Response computation runs concurrently with main program 
+import os
+dir = os.path.dirname(__file__)
 
 
 def listen(portnum):
@@ -54,11 +56,16 @@ def returnFileText(path):
     """
     take file path and return contents
     """
+    #path = os.path.join(dir, path)
+    #print(dir + path);
     try:
-      f = open(path)
+      f = open(os.path.join(os.path.dirname(__file__), path));
     except: #catch all
-      f = open('404.html')
-      
+      if path == '':
+        f = open(os.path.join(os.path.dirname(__file__), 'index.html'));
+      else:
+        f = open(os.path.join(os.path.dirname(__file__), '404.html'));
+
     return f.read()
      
 
@@ -77,7 +84,6 @@ def respond(sock):
         transmit("HTTP/1.0 200 OK\n\n", sock)
         url = parts[1][1:];
         message = returnFileText(url);
-        
         transmit(message, sock)
     else:
         transmit("\nI don't handle this request: {}\n".format(request), sock)
